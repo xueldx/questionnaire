@@ -6,12 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 
-@Controller('question')
+@Controller('api/question')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
@@ -21,8 +22,8 @@ export class QuestionController {
   }
 
   @Get()
-  findAll() {
-    return this.questionService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 20) {
+    return this.questionService.findAll(page, limit);
   }
 
   @Get(':id')
