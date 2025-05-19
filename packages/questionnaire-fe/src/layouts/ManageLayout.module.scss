@@ -1,15 +1,18 @@
 .container {
-  margin: 0 auto;
-  padding: 24px 0;
-  width: 1440px;
+  padding: 24px 50px;
+  height: 100%;
   display: flex;
+  background: #f7f7f7;
 }
 
 .left {
-  width: 180px;
+  margin-left: 20px;
+  width: 150px;
 }
 
 .right {
   flex: 1;
-  margin-left: 60px;
+  width: 0px;
+  margin-left: 20px;
+  height: 100%;
 }
