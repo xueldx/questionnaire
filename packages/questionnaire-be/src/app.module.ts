@@ -1,9 +1,18 @@
+// 第三方模块
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { QuestionModule } from '@/service/question/question.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ScheduleModule } from '@nestjs/schedule';
+
+// 自定义模块
 import { AuthModule } from '@/service/auth/auth.module';
+import { MailModule } from '@/service/mail/mail.module';
+import { QuestionModule } from '@/service/question/question.module';
+import { TasksModule } from '@/tasks/tasks.module';
+
+// 自定义配置
 import configuration from '@/config';
 
 @Module({
@@ -16,15 +25,30 @@ import configuration from '@/config';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('mongo'),
+      useFactory: (config: ConfigService) => config.get('db.mongo'),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('db'),
+      useFactory: (config: ConfigService) => config.get('db.mysql'),
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: configuration().mailer.host,
+        secure: true, // true for 465, false for other ports
+        auth: {
+          user: configuration().mailer.user, // generated ethereal user
+          pass: configuration().mailer.pass, // generated ethereal password
+        },
+        debug: true, // 输出调试信息
+        logger: true, // 启用日志记录
+      },
+    }),
+    ScheduleModule.forRoot(),
     AuthModule,
+    MailModule,
     QuestionModule,
+    TasksModule,
   ],
 })
 export class AppModule {}

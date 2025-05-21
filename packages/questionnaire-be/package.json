@@ -1,6 +1,6 @@
 {
   "name": "@questionnaire/be",
-  "version": "0.2.1",
+  "version": "1.0.1",
   "description": "",
   "author": "",
   "private": true,
@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
@@ -27,6 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^4.1.1",
     "@nestjs/typeorm": "^10.0.2",
     "@questionnaire/shared": "link:../shared",
     "bcrypt": "^5.1.1",
@@ -37,7 +39,9 @@
     "moment": "^2.30.1",
     "mongoose": "^8.7.1",
     "mysql2": "^3.11.3",
+    "nodemailer": "^6.9.15",
     "openai": "^4.67.3",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "stacktrace-js": "^2.0.2",
