@@ -1,21 +1,25 @@
 import React, { useState } from 'react'
-import { Typography, Space, Button, Form, Input, App, Modal } from 'antd'
-import { UserAddOutlined } from '@ant-design/icons'
-import styles from './Register.module.scss'
-import { Link } from 'react-router-dom'
+import { Space, Button, Form, Input, App, Modal } from 'antd'
+import { useNavigate } from 'react-router-dom'
 import { LOGIN_PATH } from '@/router'
 import { Rule } from 'antd/es/form'
 import apis from '@/apis'
+import colorfulLogo from '@/assets/img/colorful-logo.png'
 import { UserInfo } from '@/apis/modules/types/auth'
 import { isRequestSuccess } from '@/utils'
 
-const { Title } = Typography
-
 const Register: React.FC = () => {
   const { message } = App.useApp()
+  const nav = useNavigate()
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    username: '',
+    password: '',
+    nickname: '',
+    email: ''
+  })
 
   enum formItem {
     username = 'username',
@@ -56,27 +60,36 @@ const Register: React.FC = () => {
     const res = await apis.mailApi.verifyEmailCode({ email, code })
     if (isRequestSuccess(res)) {
       message.success(res.msg)
+      setUserInfo({
+        ...userInfo,
+        email
+      })
+      message.info('验证成功，正在注册中，请稍后')
+      registerUser()
+    }
+  }
+
+  const registerUser = async () => {
+    const res = await apis.authApi.register(userInfo)
+    if (isRequestSuccess(res)) {
+      message.success(res.msg)
+      nav(LOGIN_PATH)
     }
   }
 
   const onFinish = async (values: UserInfo) => {
     setOpen(true)
-    // const res = await apis.register(values)
-    // console.log(res)
+    setUserInfo({
+      ...userInfo,
+      ...values
+    })
   }
 
   return (
-    <div className={styles.container}>
-      <div>
-        <Space>
-          <Title level={2}>
-            <UserAddOutlined />
-          </Title>
-          <Title level={2}>注册新用户</Title>
-        </Space>
-      </div>
-      <div>
-        <Form name="register" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={onFinish}>
+    <div className="custom-main flex flex-col justify-center items-center">
+      <div className="bg-white/50 backdrop-blur-sm p-10 rounded-md shadow-white shadow-2xl">
+        <img className="h-48" src={colorfulLogo} />
+        <Form name="register" layout="vertical" onFinish={onFinish}>
           <Form.Item label="用户名" name={formItem.username} rules={rules.username}>
             <Input />
           </Form.Item>
@@ -98,12 +111,14 @@ const Register: React.FC = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <div className="flex gap-4 justify-center items-center">
             <Button type="primary" htmlType="submit">
               注册
             </Button>
-            <Link to={LOGIN_PATH}>已有用户，登录</Link>
-          </Form.Item>
+            <Button type="default" onClick={() => nav(LOGIN_PATH)}>
+              已注册，去登录
+            </Button>
+          </div>
         </Form>
       </div>
       <Modal title="邮箱验证" open={open} onOk={verifyIdentity}>
