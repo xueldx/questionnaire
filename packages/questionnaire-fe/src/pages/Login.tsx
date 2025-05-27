@@ -1,24 +1,23 @@
 import React, { useEffect } from 'react'
 import styles from './Login.module.scss'
-import { useNavigate, Link } from 'react-router-dom'
-import { Button, Checkbox, Form, Input, Space, Typography, App } from 'antd'
-import { UserAddOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import { Button, Checkbox, Form, Input, Space } from 'antd'
 import { REGISTER_PATH } from '@/router'
 import apis from '@/apis'
 import { rememberUser, deleteUserFormStorage, getUserFormStorage } from '@/utils'
-
-const { Title } = Typography
+import colorfulLogo from '@/assets/img/colorful-logo.png'
+import useRequestSuccessChecker from '@/hooks/useRequestSuccessChecker'
 
 const Login: React.FC = () => {
   const nav = useNavigate()
-  const { message } = App.useApp()
-
+  const { isRequestSuccess } = useRequestSuccessChecker()
   const onFinish = async (values: any) => {
     const { username, password, remember } = values || {}
     if (remember) {
       const res = await apis.authApi.login({ username, password })
-      message.success(res.msg)
-      rememberUser(username, password)
+      if (isRequestSuccess(res)) {
+        rememberUser(username, password)
+      }
     } else {
       deleteUserFormStorage()
     }
@@ -31,23 +30,10 @@ const Login: React.FC = () => {
     form.setFieldsValue({ username, password })
   }, [])
   return (
-    <div className={styles.container}>
-      <div>
-        <Space>
-          <Title level={2}>
-            <UserAddOutlined />
-          </Title>
-          <Title level={2}>用户登录</Title>
-        </Space>
-      </div>
-      <div>
-        <Form
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          form={form}
-          onFinish={onFinish}
-        >
+    <div className="custom-main flex justify-center items-center">
+      <div className="bg-white/50 backdrop-blur-sm p-5 rounded-md shadow-white shadow-2xl">
+        <img className="h-48" src={colorfulLogo} />
+        <Form layout="vertical" initialValues={{ remember: true }} form={form} onFinish={onFinish}>
           <Form.Item
             label="用户名"
             name="username"
@@ -66,17 +52,17 @@ const Login: React.FC = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+          <Form.Item name="remember" valuePropName="checked">
             <Checkbox>记住我</Checkbox>
           </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Space>
-              <Button type="primary" htmlType="submit">
-                登录
-              </Button>
-              <Link to={REGISTER_PATH}>注册新用户</Link>
-            </Space>
-          </Form.Item>
+          <div className="flex justify-center items-center gap-4">
+            <Button type="primary" htmlType="submit">
+              登录
+            </Button>
+            <Button type="default" onClick={() => nav(REGISTER_PATH)}>
+              去注册
+            </Button>
+          </div>
         </Form>
       </div>
     </div>

@@ -1,7 +1,7 @@
 // 第三方模块
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
+// import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -14,6 +14,7 @@ import { TasksModule } from '@/tasks/tasks.module';
 
 // 自定义配置
 import configuration from '@/config';
+import DatabaseLogger from '@/common/utils/databaseLogger';
 
 @Module({
   imports: [
@@ -22,15 +23,20 @@ import configuration from '@/config';
       isGlobal: true,
       load: [configuration],
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('db.mongo'),
-    }),
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => config.get('db.mongo'),
+    // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('db.mysql'),
+      useFactory: (config: ConfigService) => {
+        return {
+          ...config.get('db.mysql'),
+          logger: new DatabaseLogger(),
+        };
+      },
     }),
     MailerModule.forRoot({
       transport: {

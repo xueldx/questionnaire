@@ -1,13 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Typography } from 'antd'
 import { MANAGE_INDEX_PATH } from '@/router'
-import styles from './Home.module.scss'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import Face from '@/components/Face/Face'
-
-const { Title, Paragraph } = Typography
+import { Button } from 'antd'
 
 const Home: React.FC = () => {
   const nav = useNavigate()
@@ -21,21 +18,20 @@ const Home: React.FC = () => {
   })
 
   return (
-    <div className={styles.container}>
+    <div className="custom-main flex flex-col justify-center items-center">
       <Face />
-      <div className={styles.info}>
-        <Title id="title">问卷调查 | 在线投票</Title>
-        <Paragraph id="description">
-          <p style={{ fontSize: '1.2rem' }}>
-            已累计创建问卷 100👧 份，发布问卷 87🧒 份，收到答卷 1800📃 份
-          </p>
-        </Paragraph>
+      <div className="text-center mb-10">
+        <div className="custom-main-title mb-5" id="title">
+          问卷调查 | 在线投票
+        </div>
+        <div className="mb-5 text-lg" id="description">
+          已累计创建问卷 100👧 份，发布问卷 87🧒 份，收到答卷 1800📃 份
+        </div>
         <div id="startBtn">
           <Button type="dashed" onClick={() => nav(MANAGE_INDEX_PATH)}>
-            Start Use &rarr;
+            START USE
           </Button>
         </div>
-        <Title id="subTitle" className={styles.subTitle} level={3}></Title>
       </div>
     </div>
   )

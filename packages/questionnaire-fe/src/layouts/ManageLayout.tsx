@@ -1,68 +1,62 @@
 import React from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import styles from './ManageLayout.module.scss'
-import { Button, Space, Divider, message } from 'antd'
 import { useRequest } from 'ahooks'
-import { PlusOutlined, BarsOutlined, StarOutlined, DeleteOutlined } from '@ant-design/icons'
 import apis from '@/apis'
+import { Button, Divider, Space } from 'antd'
+import { DeleteFilled, FileAddFilled, StarFilled, StepForwardFilled } from '@ant-design/icons'
 const ManageLayout: React.FC = () => {
   const nav = useNavigate()
   const { pathname } = useLocation()
-  const [messageApi] = message.useMessage()
   // 手动触发逻辑
   const {
     loading,
     error,
     run: handleCreateQuestion
   } = useRequest(apis.questionApi.createQuestion, {
-    manual: true,
-    onSuccess(result) {
-      nav(`/question/edit/${result.data.id}`)
-      messageApi.success('创建成功')
-    }
+    manual: true
   })
 
   return (
-    <div className={styles.container}>
-      <div className={styles.left}>
+    <div className="py-4 px-12 h-full flex bg-gray-100">
+      <div className="ml-5 w-40">
         <Space direction="vertical">
           <Button
-            type="primary"
-            size="large"
             loading={loading}
-            icon={<PlusOutlined />}
+            type="primary"
+            size="middle"
+            icon={<FileAddFilled />}
             onClick={handleCreateQuestion}
           >
             新建问卷
           </Button>
-          <Divider style={{ borderTop: 'transparent' }} />
+          <Divider className="my-4" />
           <Button
             type={pathname.startsWith('/manage/list') ? 'dashed' : 'text'}
-            size="large"
-            icon={<BarsOutlined />}
+            size="middle"
+            icon={<StepForwardFilled />}
             onClick={() => nav('/manage/list')}
           >
             我的问卷
           </Button>
           <Button
             type={pathname.startsWith('/manage/star') ? 'dashed' : 'text'}
-            size="large"
-            icon={<StarOutlined />}
+            size="middle"
+            icon={<StarFilled />}
             onClick={() => nav('/manage/star')}
           >
             星标问卷
           </Button>
           <Button
             type={pathname.startsWith('/manage/trash') ? 'dashed' : 'text'}
-            size="large"
-            icon={<DeleteOutlined />}
+            size="middle"
+            icon={<DeleteFilled />}
             onClick={() => nav('/manage/trash')}
           >
             回收站
           </Button>
         </Space>
       </div>
-      <div className={styles.right}>
+      <div className="flex-1 w-0 ml-5 h-full">
         <Outlet />
       </div>
     </div>
