@@ -5,6 +5,8 @@ import styles from './Common.module.scss'
 import { Typography, Spin, FloatButton } from 'antd'
 import ListSearch from '@/components/Common/listSearch'
 import apis from '@/apis'
+import { useDispatch, useSelector } from 'react-redux'
+import { setScreenSpinning } from '@/store/modules/utilsSlice'
 
 const { Title } = Typography
 // 上拉加载步进长度
@@ -15,6 +17,8 @@ const List: React.FC = () => {
   const bottomRef = useRef(null)
   const [currentView, setCurrentView] = useState(1)
   const [questionList, setQuestionList] = useState([])
+
+  const dispatch = useDispatch()
 
   // 使用 useRequest 获取数据
   const {
@@ -32,6 +36,10 @@ const List: React.FC = () => {
     }
   }, [res])
 
+  useEffect(() => {
+    dispatch(setScreenSpinning(loading))
+  }, [loading])
+
   // 监听 isTouchBottom 变化，触发加载更多
   const [isTouchBottom] = useInViewport(bottomRef)
   useEffect(() => {
@@ -48,22 +56,22 @@ const List: React.FC = () => {
   }
 
   return (
-    <>
-      <div className={styles.header}>
-        <div className={styles.title}>
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center">
+        <div className="p-2">
           <Title level={3}>我的问卷</Title>
         </div>
-        <div className={styles.search}>
+        <div className="p-2">
           <ListSearch />
         </div>
       </div>
-      <div className={styles.list} ref={questionListRef}>
+      <div className="px-2 overflow-y-scroll" ref={questionListRef}>
         {/* 问卷列表 */}
         {questionList.length > 0 &&
           questionList.map((item: any) => (
             <QuestionCard
               key={item.id}
-              _id={item.id}
+              id={item.id}
               title={item.title}
               isPublished={item.is_published}
               isStar={item.is_star}
@@ -72,17 +80,9 @@ const List: React.FC = () => {
             />
           ))}
         <FloatButton.BackTop target={targetFn} visibilityHeight={120} />
-        <div ref={bottomRef}>
-          {loading ? (
-            <div style={{ textAlign: 'center', marginTop: 40 }}>
-              <Spin fullscreen tip="加载中..." />
-            </div>
-          ) : (
-            <div style={{ height: '60px' }}></div>
-          )}
-        </div>
+        <div ref={bottomRef} className="h-14"></div>
       </div>
-    </>
+    </div>
   )
 }
 
