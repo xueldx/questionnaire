@@ -1,5 +1,9 @@
-import Utils from "./utils"
+import Utils from "./modules/utils"
+import RegExp from "./modules/regexp"
 
-export default {
+const shared = {
   Utils,
+  RegExp,
 }
+
+export default shared
