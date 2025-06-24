@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { MANAGE_INDEX_PATH } from '@/router'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import Face from '@/components/Face/Face'
 import { Button } from 'antd'
+import lottieFile from '@/assets/lottie/lottieFile.json'
+import LottieAnimation from '@/components/common/LottieAnimation'
 
 const Home: React.FC = () => {
   const nav = useNavigate()
@@ -19,7 +20,9 @@ const Home: React.FC = () => {
 
   return (
     <div className="custom-main flex flex-col justify-center items-center">
-      <Face />
+      <div className="absolute top-8">
+        <LottieAnimation animationData={lottieFile} />
+      </div>
       <div className="text-center mb-10">
         <div className="custom-main-title mb-5" id="title">
           问卷调查 | 在线投票

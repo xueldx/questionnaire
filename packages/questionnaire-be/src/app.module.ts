@@ -10,6 +10,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '@/service/auth/auth.module';
 import { MailModule } from '@/service/mail/mail.module';
 import { QuestionModule } from '@/service/question/question.module';
+import { FileModule } from '@/service/file/file.module';
 import { TasksModule } from '@/tasks/tasks.module';
 
 // 自定义配置
@@ -19,6 +20,8 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpRequestInterceptor } from './middleware/request.interceptor';
 import { HttpResponseInterceptor } from './middleware/response.interceptor';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -54,10 +57,15 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
         logger: true, // 启用日志记录
       },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static'), // 静态文件路径
+      serveRoot: '/files/', // 路径前缀
+    }),
     ScheduleModule.forRoot(),
     AuthModule,
     MailModule,
     QuestionModule,
+    FileModule,
     TasksModule,
   ],
   providers: [
