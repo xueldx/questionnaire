@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useInViewport, useRequest, useTitle } from 'ahooks'
-import QuestionCard from '@/components/common/QuestionCard'
-import { Typography, Spin, FloatButton } from 'antd'
-import ListSearch from '@/components/common/listSearch'
+import QuestionCard from '@/components/Common/QuestionCard'
+import ListSearch from '@/components/Common/ListSearch'
+import { Typography, FloatButton } from 'antd'
 import apis from '@/apis'
 import { useDispatch } from 'react-redux'
 import { setScreenSpinning } from '@/store/modules/utilsSlice'
-import { useSearchParams } from 'react-router-dom'
-import { LIST_SEARCH_PARAM_KEY } from '@/constant'
 
 const { Title } = Typography
 // 上拉加载步进长度
@@ -19,28 +17,31 @@ const List: React.FC = () => {
   const [currentView, setCurrentView] = useState(1)
   const [questionList, setQuestionList] = useState([])
   const [search, setSearch] = useState('')
+  const [total, setTotal] = useState(10)
   const dispatch = useDispatch()
 
   // 使用 useRequest 获取数据
-  const {
-    loading,
-    data: res,
-    run: getList
-  } = useRequest(() => apis.questionApi.getQuestionList(currentView, stepSize, search), {
-    manual: true
-  })
+  const { loading, data: res } = useRequest(
+    () => apis.questionApi.getQuestionList(currentView, stepSize, search),
+    {
+      refreshDeps: [currentView, search]
+    }
+  )
 
   const searchChange = (search: string) => {
     setSearch(search)
     setCurrentView(1)
-    setQuestionList([])
-    getList()
   }
 
   // 当数据加载完成时更新 questionList
   useEffect(() => {
-    if (res && res.data.list) {
-      setQuestionList(questionList.concat(res.data.list))
+    if (res && res?.data?.list) {
+      if (currentView === 1) {
+        setQuestionList(res.data.list)
+      } else {
+        setQuestionList(questionList.concat(res.data.list))
+      }
+      setTotal(res?.data?.count || 0)
     }
   }, [res])
 
@@ -51,8 +52,7 @@ const List: React.FC = () => {
   // 监听 isTouchBottom 变化，触发加载更多
   const [isTouchBottom] = useInViewport(bottomRef)
   useEffect(() => {
-    if (isTouchBottom) {
-      getList()
+    if (isTouchBottom && questionList.length && questionList.length < total) {
       setCurrentView(currentView => currentView + 1)
     }
   }, [isTouchBottom])
@@ -88,7 +88,9 @@ const List: React.FC = () => {
             />
           ))}
         <FloatButton.BackTop target={targetFn} visibilityHeight={120} />
-        <div ref={bottomRef} className="h-14"></div>
+        <div ref={bottomRef} className="h-14 text-lg text-center text-custom-text-100">
+          {questionList.length >= total ? '🎉duang! 到底喽!🎉' : ''}
+        </div>
       </div>
     </div>
   )
