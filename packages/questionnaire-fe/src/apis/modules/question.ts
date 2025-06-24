@@ -7,23 +7,18 @@ const prefix = '/api/question'
 /**
  * 获取问卷列表
  */
-const getQuestionList = async (page: number, limit: number) => {
-  return await request.get<any, RespType<any>>(`${prefix}?page=${page}&limit=${limit}`)
-}
+const getQuestionList = (page: number, limit: number, search: string) =>
+  request.get<any, RespType<any>>(`${prefix}?page=${page}&limit=${limit}&search=${search}`)
 
 /**
  * 获取问卷详情
  */
-const getQuestionById = async (id: string) => {
-  return await request.get<string, RespType<any>>(`${prefix}/${id}`)
-}
+const getQuestionById = (id: string) => request.get<string, RespType<any>>(`${prefix}/${id}`)
 
 /**
  * 创建问卷
  */
-const createQuestion = async () => {
-  return await request.post<any, RespType<{ id: string }>>(`${prefix}`)
-}
+const createQuestion = () => request.post<any, RespType<{ id: string }>>(`${prefix}`)
 
 export default {
   getQuestionList,
