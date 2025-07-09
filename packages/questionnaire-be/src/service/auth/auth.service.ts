@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@/service/auth/entities/User.entity';
+import User from '@/entities/user.entity';
 import { Repository } from 'typeorm';
 import RegisterUserDto from '@/service/auth/dto/register-user.dto';
 import LoginDto from '@/service/auth/dto/login.dto';
@@ -23,6 +23,11 @@ export class AuthService {
       saltRounds,
     );
     return await this.userRepository.save(registerUserDto);
+  }
+
+  async getUserInfo(email) {
+    const { id } = await this.findByEmail(email);
+    console.log(id);
   }
 
   async findByEmail(email: string) {
