@@ -15,6 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // 创建用户
   async createUser(registerUserDto: RegisterUserDto) {
     const saltRounds = 10; // 盐的轮数
     // 撒盐加密
@@ -25,17 +26,29 @@ export class AuthService {
     return await this.userRepository.save(registerUserDto);
   }
 
+  // 获取用户信息
   async getUserInfo(email) {
-    const { id } = await this.findByEmail(email);
-    console.log(id);
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new Error('用户不存在');
+    }
+    return {
+      nickname: user.nickname,
+      email: user.email,
+      createTime: user.create_time,
+      avatar: user.avatar,
+      bio: user.bio,
+    };
   }
 
+  // 根据邮箱查找用户
   async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: { email },
     });
   }
 
+  // 验证密码
   async comparePassword(loginDto: LoginDto) {
     const user = await this.findByEmail(loginDto.email);
     // 解密匹配
