@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RegisterUserDto from './dto/register-user.dto';
 import LoginDto from './dto/login.dto';
@@ -45,9 +37,14 @@ export class AuthController {
           email: user.email,
           password: user.password,
         });
-        return new ResponseBody<{ token: string }>(
+        const userInfo = {
+          userId: user.id,
+          avatar: user.avatar,
+          nickname: user.nickname,
+        };
+        return new ResponseBody<{ token: string; userInfo: typeof userInfo }>(
           1,
-          { token: access_token },
+          { token: access_token, userInfo: userInfo },
           '登录成功',
         );
       } else {
@@ -59,8 +56,16 @@ export class AuthController {
   }
 
   @Get('info')
-  async getUserInfo(@currentUser() userToken: UserToken) {
-    const user = await this.authService.getUserInfo(userToken.email);
-    return new ResponseBody<{ user: any }>(1, { user }, '获取用户信息成功');
+  async getUserInfo(@currentUser() user: UserToken) {
+    try {
+      const userInfo = await this.authService.getUserInfo(user.email);
+      return new ResponseBody<{ userInfo: any }>(
+        1,
+        { userInfo },
+        '获取用户信息成功',
+      );
+    } catch (error) {
+      return new ResponseBody<null>(0, null, error.message);
+    }
   }
 }
