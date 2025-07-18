@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    build: 
-      context: .
-      dockerfile: packages/questionnaire-fe/Dockerfile
+    image: crpi-oe4mbgvc2pu6g852.cn-beijing.personal.cr.aliyuncs.com/xm_questionnaire/questionnaire-frontend:v1.5.2
     ports:
       - "8877:80"  # 将主机的 8877 端口映射到容器的 80 端口
     depends_on:
@@ -13,9 +11,7 @@ services:
       - TZ=Asia/Shanghai  # 设置时区为上海
 
   backend:
-    build: 
-      context: .
-      dockerfile: packages/questionnaire-be/Dockerfile
+    image: crpi-oe4mbgvc2pu6g852.cn-beijing.personal.cr.aliyuncs.com/xm_questionnaire/questionnaire-backend:v1.5.2
     ports:
       - "8879:8879"  # 将主机的 8879 端口映射到容器的 8879 端口
     depends_on:
