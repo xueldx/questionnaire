@@ -1,9 +1,8 @@
 # 使用官方 Node.js 22 版本作为基础镜像
-FROM node:22 as build
+FROM node:22 AS build
 
-# 添加一个版本号或时间戳
-ARG BUILD_DATE=$(date +%s)
-RUN echo "Build date: ${BUILD_DATE}"
+# 使用淘宝镜像源加速 npm 安装
+RUN npm config set registry https://registry.npmmirror.com
 
 # 安装 pnpm
 RUN npm install -g pnpm
@@ -21,7 +20,7 @@ RUN pnpm install
 EXPOSE 8879
 
 # 构建后端应用
-RUN pnpm --filter @questionnaire/questionnaire-be run build
+RUN pnpm --filter @questionnaire/be run build
 
 # 启动后端应用
 CMD ["node", "packages/questionnaire-be/dist/main"]
