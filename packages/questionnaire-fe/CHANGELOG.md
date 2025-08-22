@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://gitee.com/IndulgeBack/react-questionnaire/compare/v1.7.0...v1.7.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* FE - 修复组件挂起引发的加载错误426BUG ([e0e1d4d](https://gitee.com/IndulgeBack/react-questionnaire/commits/e0e1d4d8dc79075cd338b7df78ba156a89408968))
+
+
+
+
+
+# [1.7.0](https://gitee.com/IndulgeBack/react-questionnaire/compare/v1.6.1...v1.7.0) (2024-12-16)
+
+
+### Features
+
+* FE - 添加AI生成问卷Demo入口 ([54257f5](https://gitee.com/IndulgeBack/react-questionnaire/commits/54257f5ed4b1e1482c6dac36c3da2f5655137298))
+* FE - 新增问卷JSON数据生成体验Demo ([b1d550b](https://gitee.com/IndulgeBack/react-questionnaire/commits/b1d550b529c4523708da8fde55229613a601367f))
+
+
+
+
+
 ## [1.6.1](https://gitee.com/IndulgeBack/react-questionnaire/compare/v1.6.0...v1.6.1) (2024-12-13)
 
 
