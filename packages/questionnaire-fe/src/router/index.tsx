@@ -19,6 +19,7 @@ const List = lazy(() => import('@/pages/manage/List'))
 const Star = lazy(() => import('@/pages/manage/Star'))
 const Edit = lazy(() => import('@/pages/question/Edit'))
 const Stat = lazy(() => import('@/pages/question/Stat'))
+const MarkdownView = lazy(() => import('@/pages/markdown-view'))
 
 // 路由常量
 export const HOME_PATH = '/'
@@ -29,6 +30,7 @@ export const MANAGE_INDEX_PATH = '/manage/list'
 export const MANAGE_STAR_PATH = '/manage/star'
 export const QUESTION_EDIT_PATH = '/question/edit/:id'
 export const QUESTION_STAT_PATH = '/question/stat/:id'
+export const MARKDOWN_VIEW_PATH = '/markdown-view'
 
 const router = createBrowserRouter([
   {
@@ -120,6 +122,14 @@ const router = createBrowserRouter([
         )
       }
     ]
+  },
+  {
+    path: '/markdown-view',
+    element: (
+      <Suspense fallback={<CustomSpin />}>
+        <MarkdownView />
+      </Suspense>
+    )
   }
 ])
 
