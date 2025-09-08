@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useInViewport, useRequest, useTitle } from 'ahooks'
+import { useInViewport, useTitle } from 'ahooks'
 import QuestionCard from '@/components/Common/QuestionCard'
 import ListSearch from '@/components/Common/ListSearch'
 import { Typography, FloatButton, Empty } from 'antd'
-import apis from '@/apis'
 import { useDispatch } from 'react-redux'
 import { setScreenSpinning } from '@/store/modules/utilsSlice'
+import { QuestionListType } from '@/hooks/types'
+import useLoadQuestionList from '@/hooks/useLoadQuestionList'
 
 const { Title } = Typography
 // 上拉加载步进长度
@@ -19,22 +20,23 @@ const List: React.FC = () => {
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(10)
   const dispatch = useDispatch()
-
-  // 使用 useRequest 获取数据
-  const { loading, data: res } = useRequest(
-    () => apis.questionApi.getQuestionList(currentView, stepSize, search),
-    {
-      refreshDeps: [currentView, search]
-    }
-  )
+  const [forceRefresh, setForceRefresh] = useState(false)
 
   const searchChange = (search: string) => {
     setSearch(search)
     setCurrentView(1)
   }
 
+  const { loading, res, refresh } = useLoadQuestionList({
+    currentView,
+    stepSize,
+    search,
+    type: QuestionListType.all
+  })
+
   // 当数据加载完成时更新 questionList
   useEffect(() => {
+    console.log('res', res)
     if (res && res?.data?.list) {
       if (currentView === 1) {
         setQuestionList(res.data.list)
@@ -43,7 +45,7 @@ const List: React.FC = () => {
       }
       setTotal(res?.data?.count || 0)
     }
-  }, [res])
+  }, [res, forceRefresh])
 
   useEffect(() => {
     dispatch(setScreenSpinning(loading))
@@ -62,7 +64,6 @@ const List: React.FC = () => {
   const targetFn = () => {
     return questionListRef.current as any
   }
-
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center">
@@ -82,16 +83,20 @@ const List: React.FC = () => {
               id={item.id}
               title={item.title}
               isPublished={item.is_published}
-              isStar={item.is_star}
+              isFavorated={item.is_favorated}
+              author={item.author}
+              authorId={item.author_id}
               answerCount={item.answer_count}
               createdAt={item.create_time}
+              updatedAt={item.update_time}
+              refresh={refresh}
             />
           ))
         ) : (
           <Empty className="mt-40" description="暂无问卷" />
         )}
         <FloatButton.BackTop target={targetFn} visibilityHeight={120} />
-        <div ref={bottomRef} className="h-14 text-lg text-center text-custom-text-100">
+        <div ref={bottomRef} className="h-14 text-sm text-center text-custom-text-100">
           {questionList.length >= total ? '🎉duang! 到底喽!🎉' : ''}
         </div>
       </div>
