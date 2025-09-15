@@ -1,5 +1,5 @@
-import React from 'react'
-import { App, Button, Divider, Popconfirm, Space, Tag } from 'antd'
+import React, { useMemo } from 'react'
+import { Button, Divider, Popconfirm, Space, Tag } from 'antd'
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -18,16 +18,17 @@ import useRequestSuccessChecker from '@/hooks/useRequestSuccessChecker'
 
 // ts 自定义类型
 type PropsType = {
-  id: string
+  id: number
   title: string
   isFavorated: boolean
   isPublished: boolean
   author: string
-  authorId: string
   answerCount: number
   createdAt: string
   updatedAt: string
-  refresh: () => void
+  editable: boolean
+  onRefresh: (id: number) => Promise<void>
+  onDelete: () => void
 }
 
 const QuestionCard: React.FC<PropsType> = (props: PropsType) => {
@@ -39,25 +40,35 @@ const QuestionCard: React.FC<PropsType> = (props: PropsType) => {
     isFavorated,
     isPublished,
     author,
-    authorId,
     answerCount,
     createdAt,
-    updatedAt
+    updatedAt,
+    editable,
+    onRefresh,
+    onDelete
   } = props
 
+  // 收藏或取消收藏
   const handleFavorate = async () => {
-    const res = await apis.questionApi.favorateQuestion(id)
+    const res = !isFavorated
+      ? await apis.questionApi.favorateQuestion(id)
+      : await apis.questionApi.unFavorateQuestion(id)
     if (isRequestSuccess(res)) {
+      onRefresh(id)
       successMessage(res.msg)
     }
   }
+
+  // 复制问卷
   const duplicate = () => {
     successMessage('复制成功' + id)
   }
+
+  // 删除问卷
   const del = async () => {
     const res = await apis.questionApi.deleteQuestion(id)
     if (isRequestSuccess(res)) {
-      props.refresh()
+      onDelete()
       successMessage(res.msg)
     }
   }
@@ -83,7 +94,8 @@ const QuestionCard: React.FC<PropsType> = (props: PropsType) => {
             ) : (
               <Tag icon={<ClockCircleOutlined />}>未发布</Tag>
             )}
-            <Tag color="gold">答卷:{answerCount}</Tag>
+            <Tag color="gold">作者: {author}</Tag>
+            <Tag color="gold">答卷: {answerCount}</Tag>
             <Tag bordered={false} icon={<FieldTimeOutlined />} color="lime">
               创建于: {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
             </Tag>
@@ -96,29 +108,32 @@ const QuestionCard: React.FC<PropsType> = (props: PropsType) => {
       <Divider className="my-3" />
       <div className="flex">
         <div className="flex-1">
-          <Space>
-            <Button
-              type="text"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => {
-                nav(`/question/edit/${id}`)
-              }}
-            >
-              编辑问卷
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<LineChartOutlined />}
-              onClick={() => {
-                nav(`/question/stat/${id}`)
-              }}
-              disabled={!isPublished}
-            >
-              问卷统计
-            </Button>
-          </Space>
+          {editable && (
+            <Space>
+              <Button
+                type="text"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  nav(`/question/edit/${id}`)
+                }}
+                disabled={!editable}
+              >
+                编辑问卷
+              </Button>
+              <Button
+                type="text"
+                size="small"
+                icon={<LineChartOutlined />}
+                onClick={() => {
+                  nav(`/question/stat/${id}`)
+                }}
+                disabled={!isPublished || !editable}
+              >
+                问卷统计
+              </Button>
+            </Space>
+          )}
         </div>
         <div className="flex-1 text-right">
           <Space>
@@ -135,18 +150,20 @@ const QuestionCard: React.FC<PropsType> = (props: PropsType) => {
                 复制
               </Button>
             </Popconfirm>
-            <Popconfirm
-              title="确定删除该问卷？"
-              okText="确定"
-              okType="danger"
-              cancelText="取消"
-              onConfirm={del}
-              icon={<QuestionCircleOutlined className="text-custom-red" />}
-            >
-              <Button type="text" size="small" icon={<DeleteOutlined />}>
-                删除
-              </Button>
-            </Popconfirm>
+            {editable && (
+              <Popconfirm
+                title="确定删除该问卷？"
+                okText="确定"
+                okType="danger"
+                cancelText="取消"
+                onConfirm={del}
+                icon={<QuestionCircleOutlined className="text-custom-red" />}
+              >
+                <Button type="text" size="small" icon={<DeleteOutlined />}>
+                  删除
+                </Button>
+              </Popconfirm>
+            )}
           </Space>
         </div>
       </div>
