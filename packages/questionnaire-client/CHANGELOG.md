@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.7](https://github.com/indulgeback/react-questionnaire/compare/v1.13.6...v1.13.7) (2025-02-08)
+
+**Note:** Version bump only for package @questionnaire/client
+
+
+
+
+
+## [1.13.6](https://github.com/indulgeback/react-questionnaire/compare/v1.13.5...v1.13.6) (2025-02-07)
+
+
+### Bug Fixes
+
+* 尝试不使用国内npm镜像，观察是否可以提高构建速度 ([0328444](https://github.com/indulgeback/react-questionnaire/commit/03284442c7decbd0e9874c850ead26186610bb1b))
+
+
+
+
+
+## [1.13.5](https://github.com/indulgeback/react-questionnaire/compare/v1.13.4...v1.13.5) (2025-02-07)
+
+**Note:** Version bump only for package @questionnaire/client
+
+
+
+
+
+## [1.13.4](https://github.com/indulgeback/react-questionnaire/compare/v1.13.3...v1.13.4) (2025-02-07)
+
+
+### Bug Fixes
+
+* CLIENT - 修复客户端答题页面传参BUG ([5c1e7df](https://github.com/indulgeback/react-questionnaire/commit/5c1e7dff39738bda777200f316cb4580b787434a))
+
+
+
+
+
+## [1.13.3](https://github.com/indulgeback/react-questionnaire/compare/v1.13.2...v1.13.3) (2025-02-06)
+
+**Note:** Version bump only for package @questionnaire/client
+
+
+
+
+
 ## [1.13.2](https://github.com/indulgeback/react-questionnaire/compare/v1.13.1...v1.13.2) (2025-02-06)
 
 **Note:** Version bump only for package @questionnaire/client
