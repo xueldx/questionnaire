@@ -4,9 +4,6 @@ FROM node:22 as build-stage
 # 设置工作目录
 WORKDIR /app
 
-# 配置 npm 使用国内镜像源
-RUN npm config set registry https://registry.npmmirror.com
-
 # 复制 monorepo 的根配置文件
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
@@ -24,7 +21,7 @@ WORKDIR /app/packages/questionnaire-be
 RUN pnpm build
 
 # 第二阶段：生产环境
-FROM node:22
+FROM node:22-alpine
 
 # 设置工作目录
 WORKDIR /app
