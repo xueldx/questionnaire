@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/indulgeback/react-questionnaire/compare/v1.14.5...v1.15.0) (2025-02-24)
+
+
+### Bug Fixes
+
+* FE - 修复问卷编辑器响应式失效的问题 ([2bfad02](https://github.com/indulgeback/react-questionnaire/commit/2bfad0271190aa70e946366fbc70592067aeba7b))
+
+
+### Features
+
+* FE - 前端增加问卷画布与部分问卷题型组件 ([dc764f2](https://github.com/indulgeback/react-questionnaire/commit/dc764f2fad50b5efef17d1b3fd1ff70035bb767a))
+
+
+
+
+
+## [1.14.5](https://github.com/indulgeback/react-questionnaire/compare/v1.14.4...v1.14.5) (2025-02-12)
+
+
+### Bug Fixes
+
+* FE - 修复登录时闭包造成的提示用户昵称未及时更新的问题 ([a2601b4](https://github.com/indulgeback/react-questionnaire/commit/a2601b43c88dd1c222c959be302efde130d81803))
+
+
+
+
+
 ## [1.14.4](https://github.com/indulgeback/react-questionnaire/compare/v1.14.3...v1.14.4) (2025-02-12)
 
 **Note:** Version bump only for package @questionnaire/fe
