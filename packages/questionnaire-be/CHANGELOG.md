@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/indulgeback/react-questionnaire/compare/v1.14.5...v1.15.0) (2025-02-24)
+
+
+### Features
+
+* SQL文件更新 ([3b9f5c5](https://github.com/indulgeback/react-questionnaire/commit/3b9f5c5ccaef378f86da60c1056d4e36b1c38603))
+
+
+
+
+
+## [1.14.5](https://github.com/indulgeback/react-questionnaire/compare/v1.14.4...v1.14.5) (2025-02-12)
+
+
+### Bug Fixes
+
+* 修复mongo在服务器ip不正确导致的后端程序没有启动的问题 ([7497107](https://github.com/indulgeback/react-questionnaire/commit/7497107da8ae8ae38acd306e084d3e8777114cf3))
+
+
+
+
+
 ## [1.14.4](https://github.com/indulgeback/react-questionnaire/compare/v1.14.3...v1.14.4) (2025-02-12)
 
 **Note:** Version bump only for package @questionnaire/be
