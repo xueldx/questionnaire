@@ -3,11 +3,9 @@ import { MongoClient, MongoClientOptions } from "mongodb";
 let uri: string = "";
 
 if (process.env.NODE_ENV === "production") {
-  uri = process.env.MONGO_HOST as string;
+  uri = `mongodb://admin:12345678@${process.env.MONGO_HOST}:27017/questionnaire_mongo_db?authSource=admin`;
 } else {
-  uri =
-    process.env.MONGODB_URI ||
-    "mongodb://root:example@localhost:27017/your_database?authSource=admin";
+  uri = "mongodb://admin:12345678@localhost:27017/questionnaire_mongo_db?authSource=admin";
 }
 
 const options: MongoClientOptions = {};
