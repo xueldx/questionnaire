@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/indulgeback/react-questionnaire/compare/v1.19.0...v1.20.0) (2025-05-09)
+
+**Note:** Version bump only for package @questionnaire/be
+
+
+
+
+
+# [1.19.0](https://github.com/indulgeback/react-questionnaire/compare/v1.18.0...v1.19.0) (2025-05-08)
+
+**Note:** Version bump only for package @questionnaire/be
+
+
+
+
+
+# [1.18.0](https://github.com/indulgeback/react-questionnaire/compare/v1.17.0...v1.18.0) (2025-05-07)
+
+**Note:** Version bump only for package @questionnaire/be
+
+
+
+
+
 # [1.17.0](https://github.com/indulgeback/react-questionnaire/compare/v1.16.1...v1.17.0) (2025-05-06)
 
 
