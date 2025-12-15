@@ -1,4 +1,4 @@
-import { Question } from '@/common/schemas/question-detail.schema';
+import { QuestionComponent } from '@/common/schemas/question-detail.schema';
 import { IsNotEmpty, IsNumber, Min, IsArray, IsString } from 'class-validator';
 
 export class SaveDto {
@@ -12,14 +12,22 @@ export class SaveDto {
 
   @IsNotEmpty()
   @IsString()
+  creator: string;
+
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
   @IsNotEmpty()
   @IsArray()
-  questions: Question[];
+  components: QuestionComponent[];
 
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
   version: number;
+
+  @IsNotEmpty()
+  @IsString()
+  footer_text: string;
 }

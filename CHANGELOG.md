@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.1](https://github.com/indulgeback/react-questionnaire/compare/v1.21.0...v1.21.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* 修复打包失败的问题 ([ad08d9a](https://github.com/indulgeback/react-questionnaire/commit/ad08d9a6af72a295c0e9d3bf7156c88bbfb9fdf2))
+* 修复问题类型导致的打包失败的问题 ([8557eff](https://github.com/indulgeback/react-questionnaire/commit/8557eff50cbedc0a0fa9753b8e10e3536334a552))
+
+
+
+
+
+# [1.21.0](https://github.com/indulgeback/react-questionnaire/compare/v1.20.1...v1.21.0) (2025-05-12)
+
+
+### Features
+
+* 更新问卷编辑功能，新增问卷创建和保存接口，优化组件拖拽功能，支持动态组件管理和状态更新 ([1d64578](https://github.com/indulgeback/react-questionnaire/commit/1d6457823c89f3f4814f959d0ab82f04ca1eff08))
+* 更新问卷生成逻辑，支持自定义问题数量和详细格式，优化问卷组件管理，增强用户体验 ([b7795eb](https://github.com/indulgeback/react-questionnaire/commit/b7795eb5090943728f6b703ff14f2c6ef022e555))
+
+
+
+
+
+## [1.20.1](https://github.com/indulgeback/react-questionnaire/compare/v1.20.0...v1.20.1) (2025-05-09)
+
+**Note:** Version bump only for package root
+
+
+
+
+
 # [1.20.0](https://github.com/indulgeback/react-questionnaire/compare/v1.19.0...v1.20.0) (2025-05-09)
 
 

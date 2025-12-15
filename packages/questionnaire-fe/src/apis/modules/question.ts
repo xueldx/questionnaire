@@ -23,7 +23,16 @@ const getQuestionById = (id: number) => request.get<number, RespType<any>>(`${pr
 /**
  * 创建问卷
  */
-const createQuestion = () => request.post<any, RespType<{ id: number }>>(`${prefix}`)
+const createQuestion = (params: { author_id?: number; author?: string }) =>
+  request.post<any, RespType<{ id: number }>>(`${prefix}`, params)
+
+/**
+ * 更新问卷
+ */
+const updateQuestion = (
+  id: number,
+  params: { title: string; description: string; footer_text: string }
+) => request.patch<any, RespType<any>>(`${prefix}/${id}`, params)
 
 /**
  * 收藏问卷
@@ -42,11 +51,26 @@ const unFavorateQuestion = (id: number) =>
  */
 const deleteQuestion = (id: number) => request.delete<number, RespType<any>>(`${prefix}/${id}`)
 
+/**
+ * 发布问卷
+ */
+const publishQuestion = (id: number) =>
+  request.get<number, RespType<any>>(`${prefix}/publish/${id}`)
+
+/**
+ * 取消发布问卷
+ */
+const unPublishQuestion = (id: number) =>
+  request.get<number, RespType<any>>(`${prefix}/unpublish/${id}`)
+
 export default {
   getQuestionList,
   getQuestionById,
   createQuestion,
   favorateQuestion,
   unFavorateQuestion,
-  deleteQuestion
+  deleteQuestion,
+  updateQuestion,
+  publishQuestion,
+  unPublishQuestion
 }
