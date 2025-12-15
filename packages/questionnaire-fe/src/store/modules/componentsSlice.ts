@@ -11,11 +11,13 @@ export type ComponentInfoType = {
 export type ComponentsStateType = {
   selectedId: string
   componentList: Array<ComponentInfoType>
+  version: number
 }
 
 const initialState: ComponentsStateType = {
   selectedId: '',
-  componentList: []
+  componentList: [],
+  version: 1
 }
 
 // 生成唯一ID
@@ -27,7 +29,14 @@ export const componentsSlice = createSlice({
   name: 'components',
   initialState,
   reducers: {
-    resetComponents: (state: ComponentsStateType, action: PayloadAction<ComponentsStateType>) => {
+    resetComponents: (
+      state: ComponentsStateType,
+      action: PayloadAction<{
+        selectedId: string
+        componentList: Array<ComponentInfoType>
+        version: number
+      }>
+    ) => {
       return action.payload
     },
     setSelectedId: (state: ComponentsStateType, action: PayloadAction<string>) => {
@@ -97,6 +106,36 @@ export const componentsSlice = createSlice({
         // 更新组件标题
         targetComponent.title = title
       }
+    },
+    reorderComponents: (
+      state: ComponentsStateType,
+      action: PayloadAction<{
+        sourceIndex: number
+        destinationIndex: number
+      }>
+    ) => {
+      const { sourceIndex, destinationIndex } = action.payload
+
+      // 确保索引有效
+      if (
+        sourceIndex < 0 ||
+        sourceIndex >= state.componentList.length ||
+        destinationIndex < 0 ||
+        destinationIndex >= state.componentList.length
+      ) {
+        return
+      }
+
+      // 创建新数组以重新排序组件
+      const newComponentList = [...state.componentList]
+      const [movedComponent] = newComponentList.splice(sourceIndex, 1)
+      newComponentList.splice(destinationIndex, 0, movedComponent)
+
+      // 更新组件列表
+      state.componentList = newComponentList
+    },
+    setVersion: (state: ComponentsStateType, action: PayloadAction<number>) => {
+      state.version = action.payload
     }
   }
 })
@@ -107,7 +146,9 @@ export const {
   addComponent,
   deleteComponent,
   updateComponentProps,
-  changeComponentTitle
+  changeComponentTitle,
+  reorderComponents,
+  setVersion
 } = componentsSlice.actions
 
 export default componentsSlice.reducer

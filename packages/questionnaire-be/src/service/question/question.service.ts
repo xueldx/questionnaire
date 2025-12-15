@@ -23,11 +23,9 @@ export class QuestionService {
   // 创建问卷
   async create(createQuestionDto: CreateQuestionDto) {
     const question = new Question();
-    question.title = createQuestionDto.title;
-    question.description = createQuestionDto.description;
     question.author_id = createQuestionDto.author_id;
     question.author = createQuestionDto.author;
-    await this.questionRepository.save(question);
+    return await this.questionRepository.save(question);
   }
 
   // 分页查询问卷列表
@@ -151,8 +149,19 @@ export class QuestionService {
     }
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  async update(id: number, updateQuestionDto: UpdateQuestionDto) {
+    const question = await this.questionRepository.findOneBy({ id });
+    if (!question) {
+      throw new Error('该问卷不存在');
+    }
+
+    const updateData = {
+      ...question,
+      ...updateQuestionDto,
+      update_time: new Date(),
+    };
+
+    return await this.questionRepository.update(id, updateData);
   }
 
   // 删除问卷
@@ -199,5 +208,17 @@ export class QuestionService {
       ...question,
       is_favorated: !!is_favorated,
     };
+  }
+
+  async publish(id: number) {
+    return await this.questionRepository.update(id, {
+      is_published: true,
+    });
+  }
+
+  async unPublish(id: number) {
+    return await this.questionRepository.update(id, {
+      is_published: false,
+    });
   }
 }

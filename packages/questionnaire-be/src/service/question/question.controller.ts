@@ -11,30 +11,28 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { QuestionService } from '@/service/question/question.service';
-import CreateQuestionDto from '@/service/question/dto/create-question.dto';
 import UpdateQuestionDto from '@/service/question/dto/update-question.dto';
 import FindAllQuestionDto from '@/service/question/dto/find-all-question.dto';
 import { JwtAuthGuard } from '@/guard/jwt-auth.guard';
-import { Public } from '@/common/decorators/public.decorator';
 import { ResponseBody } from '@/common/classes/response-body';
 import { Logger } from '@/common/utils/log4js';
 import {
   currentUser,
   UserToken,
 } from '@/common/decorators/current-user.decorator';
+import CreateQuestionDto from './dto/create-question.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('question')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @Public()
   // 新建问卷
   @Post()
   async create(@Body() createQuestionDto: CreateQuestionDto) {
     try {
-      await this.questionService.create(createQuestionDto);
-      return new ResponseBody<any>(1, null, '创建成功');
+      const data = await this.questionService.create(createQuestionDto);
+      return new ResponseBody<any>(1, data, '创建成功');
     } catch (error) {
       return new ResponseBody<any>(0, null, error.message);
     }
@@ -69,11 +67,16 @@ export class QuestionController {
 
   // 修改单个问卷
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateQuestionDto: UpdateQuestionDto,
   ) {
-    return this.questionService.update(id, updateQuestionDto);
+    try {
+      const res = await this.questionService.update(id, updateQuestionDto);
+      return new ResponseBody<any>(1, res, '修改成功');
+    } catch (error) {
+      return new ResponseBody<any>(0, null, error.message);
+    }
   }
 
   // 删除问卷
@@ -116,6 +119,26 @@ export class QuestionController {
       const { userId } = user;
       await this.questionService.unFavorate(userId, question_id);
       return new ResponseBody<any>(1, null, '取消收藏成功');
+    } catch (error) {
+      return new ResponseBody<any>(0, null, error.message);
+    }
+  }
+
+  @Get('publish/:id')
+  async publish(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.questionService.publish(id);
+      return new ResponseBody<any>(1, null, '发布成功');
+    } catch (error) {
+      return new ResponseBody<any>(0, null, error.message);
+    }
+  }
+
+  @Get('unpublish/:id')
+  async unPublish(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.questionService.unPublish(id);
+      return new ResponseBody<any>(1, null, '取消发布成功');
     } catch (error) {
       return new ResponseBody<any>(0, null, error.message);
     }
