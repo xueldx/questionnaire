@@ -23,6 +23,7 @@ import {
   undo,
   redo
 } from '@/store/modules/componentsSlice'
+import { resetPageConfig } from '@/store/modules/pageConfigSlice'
 import useRequestSuccessChecker from '@/hooks/useRequestSuccessChecker'
 import { getUserInfoFromStorage } from '@/utils'
 
@@ -43,10 +44,13 @@ const Edit: React.FC = () => {
   const { isRequestSuccess } = useRequestSuccessChecker()
   const { message, modal } = App.useApp()
 
+  const copyExecutedRef = React.useRef(false)
+
   // 处理复制问卷
   useEffect(() => {
     const copyFrom = searchParams.get('copyFrom')
-    if (copyFrom) {
+    if (copyFrom && !copyExecutedRef.current) {
+      copyExecutedRef.current = true
       const copyQuestionnaire = async () => {
         try {
           // 获取原问卷详情
@@ -64,6 +68,15 @@ const Edit: React.FC = () => {
               selectedId: questionnaireDetail.selectedId,
               componentList: questionnaireDetail.components,
               version: 1
+            })
+          )
+
+          dispatch(
+            resetPageConfig({
+              title: `${questionnaireDetail.title} (复制)`,
+              description: questionnaireDetail.description,
+              footerText: questionnaireDetail.footer_text || ''
+              // If there are other configs like css/js they should probably be here but let's stick to what we know
             })
           )
 

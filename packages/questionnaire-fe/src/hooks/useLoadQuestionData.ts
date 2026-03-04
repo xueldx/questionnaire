@@ -29,6 +29,8 @@ function useLoadQuestionData() {
   // 初始化加载
   useEffect(() => {
     if (!id) return
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('copyFrom')) return
     run(id)
   }, [id])
 
