@@ -97,6 +97,10 @@ const Edit: React.FC = () => {
             return
           }
 
+          if (saveRes.data && typeof saveRes.data.version === 'number') {
+            dispatch(setVersion(saveRes.data.version))
+          }
+
           message.success('复制成功')
           // 移除 URL 中的 copyFrom 参数
           navigate(`${QUESTION_EDIT_PATH}/${id}`, { replace: true })
@@ -133,7 +137,12 @@ const Edit: React.FC = () => {
       const res = await apis.editorApi.saveQuestionnaireDetail(params)
       if (isRequestSuccess(res)) {
         message.success('保存成功')
-        dispatch(setVersion(version + 1))
+        if (res.data && typeof res.data.version === 'number') {
+          dispatch(setVersion(res.data.version))
+        } else {
+          // 如果后端没返回，兜底逻辑
+          dispatch(setVersion(version + 1))
+        }
         await apis.questionApi.updateQuestion(parseInt(id) || 0, {
           title: pageConfig.title || '未命名问卷',
           description: pageConfig.description || ''
