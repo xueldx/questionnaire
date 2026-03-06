@@ -288,7 +288,7 @@ react-questionnaire
 |  ├─ER.dio
 |  ├─apifox接口文档.txt
 |  ├─structure-tree.txt
-|  └小木问卷软件架构图.pdf
+|  └问卷小筑软件架构图.pdf
 ├─.husky
 |   ├─commit-msg
 |   ├─pre-commit

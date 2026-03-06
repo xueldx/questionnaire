@@ -20,12 +20,11 @@ const MainLayout: React.FC = () => {
       </main>
       <footer className="custom-footer">
         <div>
-          小木问卷 &copy;2024 - present. Created by{' '}
-          <Link to="https://indulgeback.netlify.app/">IndulgeBack</Link> Version: {__APP_VERSION__}
+          问卷小筑 &copy;2025 - present. Created by <Link to="mailto:xueldx@163.com">xueldx</Link>
         </div>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
+        {/* <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
           晋ICP备2023025256号-2
-        </a>
+        </a> */}
       </footer>
       <Spin indicator={<CustomSpin />} spinning={screenSpinning} fullscreen />
     </div>

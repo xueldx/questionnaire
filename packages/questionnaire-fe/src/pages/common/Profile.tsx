@@ -220,7 +220,7 @@ const Profile: React.FC = () => {
       <div className="h-[68px] flex justify-between items-center px-6 shrink-0 z-10 border-b border-gray-200/50 bg-white/30 backdrop-blur-md">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => nav(HOME_PATH)}>
           <FormOutlined className="text-[26px] text-[#408D86]" />
-          <span className="text-[18px] font-bold text-gray-800 tracking-wide">小木问卷</span>
+          <span className="text-[18px] font-bold text-gray-800 tracking-wide">问卷小筑</span>
         </div>
         <UserMenu />
       </div>
@@ -407,23 +407,19 @@ const Profile: React.FC = () => {
         {/* Footer */}
         <footer className="w-full text-center py-6 text-sm text-gray-500 shrink-0">
           <div>
-            小木问卷 &copy;2024 - present. Created by{' '}
-            <Link
-              to="https://indulgeback.netlify.app/"
-              className="text-gray-500 hover:text-[#408D86]"
-            >
-              IndulgeBack
+            问卷小筑 &copy;2025 - present. Created by{' '}
+            <Link to="mailto:xueldx@163.com" className="text-gray-500 hover:text-[#408D86]">
+              xueldx
             </Link>{' '}
-            Version: 1.24.1
           </div>
-          <a
+          {/* <a
             href="https://beian.miit.gov.cn/"
             target="_blank"
             rel="noreferrer"
             className="text-gray-500 hover:text-[#408D86] mt-1 inline-block"
           >
-            晋ICP备2023025256号-2
-          </a>
+            ICP备2023025256号-2
+          </a> */}
         </footer>
       </div>
     </div>

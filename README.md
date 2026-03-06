@@ -1,4 +1,4 @@
-# 🌟 小木问卷 (React Questionnaire)
+# 🌟 问卷小筑 (React Questionnaire)
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" alt="React" />
@@ -18,7 +18,7 @@
 
 ## 📝 介绍
 
-小木问卷 - 基于 NestJS 的问卷生成系统
+问卷小筑 - 基于 NestJS 的问卷生成系统
 
 ### 🛠️ 技术栈
 
@@ -63,7 +63,7 @@
 
 - 📂 目录树：查看 `/doc/structure-tree.txt`
 - 📚 API 接口文档地址：查看 `/doc/apifox接口文档.txt`
-- 🔍 架构图：查看 `/doc/小木问卷软件架构图.pdf`
+- 🔍 架构图：查看 `/doc/问卷小筑软件架构图.pdf`
 - 💾 ER 图：查看 `/doc/ER.dio`
 
 ---
@@ -113,13 +113,3 @@ chmod +x .husky/*
 
 如需在本地或云服务器上部署，请复制根目录下 `/docker/docker-compose.yml` 配置文件到服务器，并修改相关配置（如 MySQL 密码等），然后执行 `docker-compose up -d`。未暴露的环境变量可在前后端项目的配置文件中自行修改，并将镜像推送到自己的仓库，记得修改相关的镜像配置。
 
----
-
-## 🤝 参与贡献
-
-- 本 gitee 仓库仅为 github 镜像仓库，暂不处理 issue 和 pr，如有需求，请在 github 提 issue 或 pr。
-- 📦 **GitHub**: [https://github.com/indulgeback/react-questionnaire](https://github.com/indulgeback/react-questionnaire)
-- 📦 **Gitee**: [https://gitee.com/IndulgeBack/react-questionnaire](https://gitee.com/IndulgeBack/react-questionnaire)
-- 🏠 **个人主页**: [https://indulgeback.netlify.app/](https://indulgeback.netlify.app/) or [https://indulgeback.github.io/](https://indulgeback.github.io/)
-- 📧 **邮箱**: liuwenyu1937@outlook.com
-- 📝 **掘金**: [https://juejin.cn/user/1410020421418286](https://juejin.cn/user/1410020421418286)
