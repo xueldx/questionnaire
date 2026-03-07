@@ -1,5 +1,5 @@
 export default (verificationCode, expirationTime) => {
-    return `
+  return `
     <!DOCTYPE html>
     <html lang="zh-CN">
     <head>
