@@ -26,6 +26,8 @@ static
 packages/questionnaire-be/src/config/dev.local.yml
 packages/questionnaire-fe/.env.local
 packages/questionnaire-client/.env.local
+packages/questionnaire-fe/.env.development
+
 
 
 npm-debug.log*
