@@ -24,10 +24,7 @@ const normalizeStringList = (value: unknown, fallback: string[] = []) => {
         for (const key of displayKeys) {
           const candidate = (item as Record<string, unknown>)[key];
           if (typeof candidate === 'string') return candidate.trim();
-          if (
-            typeof candidate === 'number' ||
-            typeof candidate === 'boolean'
-          ) {
+          if (typeof candidate === 'number' || typeof candidate === 'boolean') {
             return String(candidate);
           }
         }
@@ -155,8 +152,7 @@ export const normalizeDraft = (
     intent === 'edit' ? snapshot.title || '未命名问卷' : '未命名问卷';
   const fallbackDescription =
     intent === 'edit' ? snapshot.description || '' : '';
-  const fallbackFooterText =
-    intent === 'edit' ? snapshot.footerText || '' : '';
+  const fallbackFooterText = intent === 'edit' ? snapshot.footerText || '' : '';
   const normalizedComponents = parsed.components.map((component, index) =>
     normalizeComponent(component, intent, index),
   );

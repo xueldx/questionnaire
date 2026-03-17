@@ -106,9 +106,7 @@ export const validateDraft = (
   });
 
   if (validComponents.length === 0) {
-    throw new Error(
-      '所有组件均校验失败，无可用内容。请重试或调整指令。',
-    );
+    throw new Error('所有组件均校验失败，无可用内容。请重试或调整指令。');
   }
 
   return {

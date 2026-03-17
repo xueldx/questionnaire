@@ -46,13 +46,9 @@ class AiAttachment {
   @CreateDateColumn()
   create_time: Date;
 
-  @ManyToOne(
-    () => AiConversation,
-    (conversation) => conversation.attachments,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => AiConversation, (conversation) => conversation.attachments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'conversation_id' })
   conversation: AiConversation;
 }

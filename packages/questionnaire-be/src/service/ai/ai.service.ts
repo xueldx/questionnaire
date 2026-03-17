@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import OpenAI from 'openai';
 import { Observable } from 'rxjs';
@@ -15,7 +19,10 @@ import {
   QuestionnaireDraft,
   QuestionnaireSnapshot,
 } from '@/service/ai/dto/copilot-stream.dto';
-import { initSseResponse, writeSseEvent } from '@/service/ai/utils/write-sse-event';
+import {
+  initSseResponse,
+  writeSseEvent,
+} from '@/service/ai/utils/write-sse-event';
 import { parseCopilotBlocks } from '@/service/ai/utils/parse-copilot-blocks';
 import { normalizeDraft } from '@/service/ai/utils/draft-normalizer';
 import { validateDraft } from '@/service/ai/utils/draft-validator';
@@ -162,7 +169,9 @@ export class AiService {
     private readonly questionRepository: Repository<Question>,
   ) {
     // 初始化 OpenAI 客户端，配置在使用时动态设置
-    const defaultModelConfig = this.resolveModelSelection(this.defaultModel).config;
+    const defaultModelConfig = this.resolveModelSelection(
+      this.defaultModel,
+    ).config;
     this.openai = new OpenAI({
       baseURL: defaultModelConfig.baseURL,
       apiKey: defaultModelConfig.apiKey,
@@ -170,7 +179,10 @@ export class AiService {
   }
 
   private getConfiguredModelMap() {
-    return (configuration().openai || {}) as Record<string, Partial<ModelRuntimeConfig>>;
+    return (configuration().openai || {}) as Record<
+      string,
+      Partial<ModelRuntimeConfig>
+    >;
   }
 
   private getModelRuntimeConfig(modelName: Model): ModelRuntimeConfig | null {
@@ -210,9 +222,10 @@ export class AiService {
     const fallbackModel = availableModelKeys.includes(this.defaultModel)
       ? this.defaultModel
       : availableModelKeys[0];
-    const selectedModel = preferredModel && availableModelKeys.includes(preferredModel)
-      ? preferredModel
-      : fallbackModel;
+    const selectedModel =
+      preferredModel && availableModelKeys.includes(preferredModel)
+        ? preferredModel
+        : fallbackModel;
 
     if (!selectedModel) {
       throw new Error('当前未配置可用的大模型');
@@ -304,8 +317,10 @@ export class AiService {
   ): SerializedAiConversationDetail {
     return {
       ...this.serializeConversation(conversation),
-      latestDraft: (conversation.latest_draft as QuestionnaireDraft | null) || null,
-      latestSummary: (conversation.latest_summary as DraftSummary | null) || null,
+      latestDraft:
+        (conversation.latest_draft as QuestionnaireDraft | null) || null,
+      latestSummary:
+        (conversation.latest_summary as DraftSummary | null) || null,
       messages: messages.map((message) => this.serializeMessage(message)),
     };
   }
@@ -354,7 +369,10 @@ export class AiService {
       .slice(-12);
   }
 
-  private async ensureQuestionnaireAccess(questionnaireId: number, userId: number) {
+  private async ensureQuestionnaireAccess(
+    questionnaireId: number,
+    userId: number,
+  ) {
     const questionnaire = await this.questionRepository.findOneBy({
       id: questionnaireId,
     });
@@ -454,7 +472,10 @@ export class AiService {
       withMessages: true,
     });
 
-    return this.serializeConversationDetail(conversation, conversation.messages || []);
+    return this.serializeConversationDetail(
+      conversation,
+      conversation.messages || [],
+    );
   }
 
   async updateConversation(
@@ -533,7 +554,10 @@ export class AiService {
     const conversation = this.aiConversationRepository.create({
       questionnaire_id: dto.questionnaireId,
       user_id: userId,
-      title: this.pickConversationTitle(undefined, dto.originalInstruction || dto.instruction),
+      title: this.pickConversationTitle(
+        undefined,
+        dto.originalInstruction || dto.instruction,
+      ),
       intent: dto.intent,
       last_model: resolvedModel.key,
       last_instruction: dto.instruction,
@@ -548,7 +572,10 @@ export class AiService {
     userId: number,
   ) {
     if (dto.conversationId) {
-      const conversation = await this.requireConversation(dto.conversationId, userId);
+      const conversation = await this.requireConversation(
+        dto.conversationId,
+        userId,
+      );
       if (conversation.questionnaire_id !== dto.questionnaireId) {
         throw new ForbiddenException('会话与当前问卷不匹配');
       }
@@ -665,10 +692,7 @@ export class AiService {
       nextProps.options = this.normalizeStringList(nextProps.options);
     }
 
-    if (
-      type === 'questionMatrixRadio' ||
-      type === 'questionMatrixCheckbox'
-    ) {
+    if (type === 'questionMatrixRadio' || type === 'questionMatrixCheckbox') {
       nextProps.rows = this.normalizeStringList(nextProps.rows);
       nextProps.columns = this.normalizeStringList(nextProps.columns);
     }
@@ -695,14 +719,14 @@ export class AiService {
       originalInstruction: this.ensureString(dto?.originalInstruction),
       history: Array.isArray(dto?.history)
         ? dto.history
-          .map((item) => ({
-            role:
-              item?.role === 'assistant'
-                ? ('assistant' as const)
-                : ('user' as const),
-            content: this.ensureString(item?.content),
-          }))
-          .filter((item) => item.content)
+            .map((item) => ({
+              role:
+                item?.role === 'assistant'
+                  ? ('assistant' as const)
+                  : ('user' as const),
+              content: this.ensureString(item?.content),
+            }))
+            .filter((item) => item.content)
         : [],
       questionnaire: {
         title: this.ensureString(snapshot.title, '未命名问卷'),
@@ -801,10 +825,7 @@ export class AiService {
   }
 
   private shouldCollectAnswerStats(dto: SanitizedCopilotDto) {
-    const normalizedInstruction = [
-      dto.originalInstruction,
-      dto.instruction,
-    ]
+    const normalizedInstruction = [dto.originalInstruction, dto.instruction]
       .filter(Boolean)
       .join('\n')
       .toLowerCase();
@@ -1007,15 +1028,15 @@ export class AiService {
     const hasExistingComponents = dto.questionnaire.components.length > 0;
     const generationTarget = hasExistingComponents
       ? [
-        '当前问卷已经有内容，润色后的 Prompt 必须明确表达“基于现有问卷继续新增内容，不要整份覆盖旧问卷”。',
-        '如果用户没有明确新增位置，不要臆造具体组件索引，只需要强调“新增一批可插入的组件”。',
-        '如果需要描述新增内容，只描述题型方向、数量范围和填写目标，不要提前展开成每一道题的具体题干或选项。',
-      ].join('\n')
+          '当前问卷已经有内容，润色后的 Prompt 必须明确表达“基于现有问卷继续新增内容，不要整份覆盖旧问卷”。',
+          '如果用户没有明确新增位置，不要臆造具体组件索引，只需要强调“新增一批可插入的组件”。',
+          '如果需要描述新增内容，只描述题型方向、数量范围和填写目标，不要提前展开成每一道题的具体题干或选项。',
+        ].join('\n')
       : [
-        '当前问卷为空，润色后的 Prompt 应该引导生成一份完整的新问卷。',
-        '请补足主题、目标人群、题型结构、题量和输出质量要求，让后续问卷生成更稳定。',
-        '这里的“补足”只限于生成约束，不要直接替用户写出详细题目、选项内容或逐题清单。',
-      ].join('\n');
+          '当前问卷为空，润色后的 Prompt 应该引导生成一份完整的新问卷。',
+          '请补足主题、目标人群、题型结构、题量和输出质量要求，让后续问卷生成更稳定。',
+          '这里的“补足”只限于生成约束，不要直接替用户写出详细题目、选项内容或逐题清单。',
+        ].join('\n');
 
     return `
 你是问卷生成前的 Prompt 润色助手。
@@ -1060,10 +1081,7 @@ ${dto.instruction}
     ].join('\n');
   }
 
-  private buildCopilotPrompt(
-    dto: CopilotStreamDto,
-    toolContextText: string,
-  ) {
+  private buildCopilotPrompt(dto: CopilotStreamDto, toolContextText: string) {
     const snapshotJson = JSON.stringify(dto.questionnaire, null, 2);
     const historyText =
       dto.history
@@ -1071,7 +1089,8 @@ ${dto.instruction}
         .map((item) => `${item.role}: ${item.content}`)
         .join('\n') || '无历史消息';
     const hasExistingComponents = dto.questionnaire.components.length > 0;
-    const originalInstruction = dto.originalInstruction?.trim() || dto.instruction;
+    const originalInstruction =
+      dto.originalInstruction?.trim() || dto.instruction;
     const instructionBlock =
       dto.intent === 'generate'
         ? `用户原始需求：
@@ -1086,22 +1105,22 @@ ${dto.instruction}`;
       dto.intent === 'generate'
         ? hasExistingComponents
           ? [
-            '当前问卷已经有内容。本轮 generate 的目标不是整份替换，而是基于现有问卷继续新增一批可插入的组件。',
-            '你输出的草稿只包含“本次新增的组件”，不要把原问卷已有组件重新重复输出。',
-            'PAGE_CONFIG 可以沿用当前问卷信息；如果你认为无需修改标题/描述/页脚，可以直接复用当前内容。',
-          ].join('\n')
+              '当前问卷已经有内容。本轮 generate 的目标不是整份替换，而是基于现有问卷继续新增一批可插入的组件。',
+              '你输出的草稿只包含“本次新增的组件”，不要把原问卷已有组件重新重复输出。',
+              'PAGE_CONFIG 可以沿用当前问卷信息；如果你认为无需修改标题/描述/页脚，可以直接复用当前内容。',
+            ].join('\n')
           : [
-            '当前问卷为空。请生成一份可直接落地的新问卷草稿。',
-            '需要输出完整的 PAGE_CONFIG 和本次生成的全部组件。',
-            '问卷标题和问卷描述必须根据用户需求重新生成，不能留空，不能写成“未命名问卷”或通用占位文案。',
-          ].join('\n')
+              '当前问卷为空。请生成一份可直接落地的新问卷草稿。',
+              '需要输出完整的 PAGE_CONFIG 和本次生成的全部组件。',
+              '问卷标题和问卷描述必须根据用户需求重新生成，不能留空，不能写成“未命名问卷”或通用占位文案。',
+            ].join('\n')
         : [
-          '当前是 edit 模式。你需要返回本轮修改涉及的原组件，以及需要新增的组件。',
-          '未提到的原组件会由系统自动保留，不要把没改的题目整份重复输出。',
-          '保留未修改组件的 fe_id。',
-          '新增组件请生成新的 fe_id。',
-          '当前版本不要通过省略组件表达删除。',
-        ].join('\n');
+            '当前是 edit 模式。你需要返回本轮修改涉及的原组件，以及需要新增的组件。',
+            '未提到的原组件会由系统自动保留，不要把没改的题目整份重复输出。',
+            '保留未修改组件的 fe_id。',
+            '新增组件请生成新的 fe_id。',
+            '当前版本不要通过省略组件表达删除。',
+          ].join('\n');
 
     return `
 你是问卷编辑器里的 AI Copilot。你要根据用户指令，生成可直接用于问卷编辑器的结构化草稿。
@@ -1227,14 +1246,11 @@ ${instructionBlock}
     res: Response,
     toolContextText: string,
     isClosed: () => boolean,
-  ): Promise<
-    | {
-      reply: string;
-      draft: QuestionnaireDraft;
-      summary: DraftSummary;
-    }
-    | null
-  > {
+  ): Promise<{
+    reply: string;
+    draft: QuestionnaireDraft;
+    summary: DraftSummary;
+  } | null> {
     const prompt = this.buildCopilotPrompt(dto, toolContextText);
     const workflowStage = this.getWorkflowStage(dto);
     let accumulatedContent = '';
@@ -1267,8 +1283,7 @@ ${instructionBlock}
         messages: [
           {
             role: 'system',
-            content:
-              '你是严谨的问卷编辑 Copilot，只输出协议规定的块内容。',
+            content: '你是严谨的问卷编辑 Copilot，只输出协议规定的块内容。',
           },
           {
             role: 'user',
@@ -1356,11 +1371,8 @@ ${instructionBlock}
       dto.intent,
     );
 
-    const { draft: validatedDraft, warnings: validationWarnings } = validateDraft(
-      rawDraft,
-      dto.questionnaire,
-      dto.intent,
-    );
+    const { draft: validatedDraft, warnings: validationWarnings } =
+      validateDraft(rawDraft, dto.questionnaire, dto.intent);
 
     if (validationWarnings.length > 0) {
       writeSseEvent(res, 'warning', {
@@ -1372,7 +1384,11 @@ ${instructionBlock}
 
     this.emitCopilotPhase(res, currentPhaseRef, 'drafting', workflowStage);
     const reply = parsed.assistantReply || '已生成可应用草稿';
-    const summary = buildDiffSummary(dto.questionnaire, validatedDraft, dto.intent);
+    const summary = buildDiffSummary(
+      dto.questionnaire,
+      validatedDraft,
+      dto.intent,
+    );
     writeSseEvent(res, 'draft', {
       reply,
       draft: validatedDraft,
@@ -1415,7 +1431,10 @@ ${instructionBlock}
       sseInitialized = true;
 
       const safeDto = this.sanitizeCopilotDto(dto);
-      await this.ensureQuestionnaireAccess(safeDto.questionnaireId, user.userId);
+      await this.ensureQuestionnaireAccess(
+        safeDto.questionnaireId,
+        user.userId,
+      );
 
       if (!safeDto.instruction) {
         throw new Error('请输入本轮 AI 指令后再发送');
@@ -1565,8 +1584,7 @@ ${instructionBlock}
             conversationId,
             role: 'assistant',
             kind: 'chat',
-            content:
-              error?.message || 'AI 工作台生成失败，请稍后重试',
+            content: error?.message || 'AI 工作台生成失败，请稍后重试',
             meta: {
               status: 'error',
             },

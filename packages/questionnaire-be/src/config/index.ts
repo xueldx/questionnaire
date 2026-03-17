@@ -51,12 +51,17 @@ const deepMerge = <T>(baseValue: T, overrideValue: unknown): T => {
   return merged as T;
 };
 
-const defaultConfig = load(readFileSync(defaultConfigPath)) as Record<string, any>;
+const defaultConfig = load(readFileSync(defaultConfigPath)) as Record<
+  string,
+  any
+>;
 const localDevConfig =
   env === 'development' && existsSync(localDevConfigPath)
     ? (load(readFileSync(localDevConfigPath)) as Record<string, any>)
     : null;
-const config = localDevConfig ? deepMerge(defaultConfig, localDevConfig) : defaultConfig;
+const config = localDevConfig
+  ? deepMerge(defaultConfig, localDevConfig)
+  : defaultConfig;
 
 // 如果是 docker 环境，则使用 docker 容器传递的环境变量配置
 if (env === configFileNameObj.docker) {
