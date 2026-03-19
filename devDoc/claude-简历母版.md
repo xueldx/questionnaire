@@ -32,7 +32,7 @@
 - 基于 `fetch` + `ReadableStream.getReader()` 封装通用 `streamRequest` 工具函数（`src/utils/streamRequest.ts`），替代浏览器原生 `EventSource`（原生不支持 POST 和自定义 Header），支持 POST 请求体、JWT 鉴权和 `AbortController` 取消
 - 自研 SSE 帧解析器 `sseFrameParser`（`src/utils/sseFrameParser.ts`），实现 `consumeSseBuffer` 缓冲区管理：按 `\n\n` 分割帧边界，逐帧提取 `event:` 和 `data:` 字段，对 `data` 做 JSON 安全解析（失败降级为原始字符串）
 - 后端设计自定义 block 协议（`parse-copilot-blocks.ts`）：LLM 输出以 `<<<COMPONENT>>>...<<<END_COMPONENT>>>` 等标记包裹结构化 JSON，后端逐块解析并通过 `draft_partial` 事件增量推送，前端实现渐进式草稿渲染
-- 定义 12 种 SSE 事件类型的 TypeScript 联合类型（`AiCopilotStreamEvent`），覆盖 meta / phase / prompt_delta / assistant_delta / tool_call / tool_result / draft_partial / draft / warning / done / error，前端通过事件分发驱动 UI 状态机
+- 定义 12 种 SSE 事件类型的 TypeScript 联合类型（`AiCopilotStreamEvent`），覆盖 meta / phase / prompt_delta / prompt_refined / assistant_delta / tool_call / tool_result / draft_partial / draft / warning / done / error，前端通过事件分发驱动 UI 状态机
 - 使用 `requestAnimationFrame` + `bufferedUiUpdatesRef` 缓冲高频流式更新（`useAiWorkbench.ts:584`），将 prompt_delta 和 draft_partial 事件合并到下一帧批量刷新，避免每个 SSE 帧触发一次 React 重渲染
 
 #### 简历精简写法
@@ -44,7 +44,7 @@
 - **S**：AI 助手需要实时展示 LLM 的流式输出，包括润色文本、对话回复和结构化问卷草稿，原生 EventSource 不支持 POST 和鉴权
 - **T**：设计一套支持鉴权、可取消、能解析结构化数据的 SSE 通信方案，同时控制高频更新带来的渲染性能问题
 - **A**：fetch + ReadableStream 替代 EventSource → 自研帧解析器管理缓冲区 → 后端 block 协议增量推送 → 12 种事件类型联合类型 → RAF 缓冲批量刷新
-- **R**：流式草稿渲染延迟控制在单帧内，用户可实时看到 AI 逐题生成的问卷内容，无卡顿感
+- **R**：实现了结构化草稿的流式预览，用户在生成过程中即可看到逐步成型的问卷内容
 
 ### 1B. 两阶段 Prompt 润色与状态机驱动的生成流程
 
@@ -57,14 +57,14 @@
 
 #### 简历精简写法
 
-> 设计 Prompt 润色→确认→生成的两阶段流程，基于 useReducer 实现 10 phase × 9 action 的生成流状态机，配合 Process 步骤可视化将 AI 处理过程拆解为 8 个实时追踪步骤，同一套状态机适配润色、生成、修改三种场景。
+> 设计 Prompt 润色→确认→生成的两阶段流程，基于 useReducer 实现 10 phase × 9 action 的生成流状态机；同时配合 Process 步骤可视化将 AI 处理过程拆解为 8 个实时追踪步骤，统一承载润色、生成、修改三类流程展示。
 
 #### STAR 表达
 
 - **S**：用户直接输入的需求往往不够精确，直接交给 LLM 生成效果差；同时 AI 处理过程对用户是黑盒，等待体验差
 - **T**：设计一个让用户参与 Prompt 优化的交互流程，并让 AI 处理过程透明可追踪
-- **A**：两阶段流程（polish → confirm → generate）→ useReducer 状态机管理 phase 转换 → Process 步骤可视化（8 步实时追踪）→ 三场景复用
-- **R**：润色后的 Prompt 生成质量显著提升，用户可实时看到 AI 在"读取问卷→分析需求→生成草稿"的每一步进展
+- **A**：两阶段流程（polish → confirm → generate）→ useReducer 状态机管理生成链路的 phase 转换 → Process 步骤可视化（8 步实时追踪）→ 润色、生成、修改三类流程共用展示框架
+- **R**：用户可以先确认和编辑润色后的 Prompt，再进入正式生成，并实时看到 AI 在“读取问卷→分析需求→生成草稿”中的处理进展
 
 ### 1C. 内联标注预览与草稿合并策略
 
@@ -100,14 +100,14 @@
 
 #### 简历精简写法
 
-> 设计多轮对话会话管理体系，支持会话持久化、历史消息聚合为流程摘要卡片和多模型动态切换；AI 分析端基于 SSE 流式输出结构化报告并支持 Word 导出，草稿生命周期管理确保用户不会意外丢失未应用的 AI 建议。
+> 设计多轮对话会话管理体系，支持会话持久化、历史消息聚合为流程摘要卡片和多模型动态切换；AI 分析端基于 SSE 流式输出结构化报告并支持 Word 导出，草稿生命周期管理会在切换模式或发起新请求前提示处理未应用草稿。
 
 #### STAR 表达
 
 - **S**：用户可能需要多次与 AI 对话来完善问卷，切换会话后需要恢复上下文；分析结果需要可导出分享
 - **T**：设计会话持久化和草稿生命周期管理，让多轮对话体验连贯；提供可导出的结构化分析报告
 - **A**：会话 CRUD + 历史消息聚合 → 多模型动态切换 → SSE 流式分析 + 结构化报告 → Word 导出 → 草稿生命周期（pending / applied / discard）
-- **R**：用户可跨会话连续优化问卷，切换回历史会话时上下文完整恢复；分析报告可一键导出为 Word 文档
+- **R**：用户可在多个会话间继续优化问卷，并恢复历史消息与草稿状态；分析报告支持导出为 Word 文档
 
 ## 模块二：可视化编辑器内核与复杂状态管理
 
@@ -175,12 +175,11 @@
 - pnpm Workspace + Lerna 管理 Monorepo，Vite + SWC 构建 PC 端，Next.js 构建移动端
 - PC 端基于 Redux Toolkit（编辑器需要 undo/redo），移动端基于 Zustand + persist（答卷需要持久化和轻量）——场景化状态管理选型
 - Vite `manualChunks` 分包策略，将大依赖拆为独立 chunk 利用浏览器缓存
-- 编辑器场景 `React.memo` 精细化控制重渲染，AI 流式场景节流控制更新频率
-- `[待补]` 路由级 `React.lazy` + `Suspense` 懒加载、虚拟列表、Lighthouse 量化指标前后对比
+- 编辑器场景 `React.memo` 精细化控制重渲染，AI 流式场景节流控制更新频率，管理端已接入路由级 `React.lazy` + `Suspense` 懒加载
 
 ### 简历精简写法
 
-> 基于 pnpm Monorepo 管理多应用工程，根据场景选型状态管理方案（编辑器用 Redux Toolkit，答卷用 Zustand），通过 Vite 分包、React.memo 精细化渲染控制和流式更新节流提升系统性能与可维护性。
+> 基于 pnpm Monorepo 管理多应用工程，根据场景选型状态管理方案（编辑器用 Redux Toolkit，答卷用 Zustand），结合路由级懒加载、Vite 分包、React.memo 精细化渲染控制和流式更新节流提升系统性能与可维护性。
 
 ---
 
@@ -188,7 +187,7 @@
 
 ### 版本 A：AI 交互体验型（适合 AI 应用 / LLM 产品方向）
 
-- 设计编辑器内嵌 AI Copilot，支持 Prompt 润色→流式生成/对话式修改问卷→内联标注预览→一键应用的完整交互链路；基于 useReducer 实现两阶段生成流状态机（10 phase × 9 action），配合 Process 步骤可视化让 AI 处理过程透明可追踪
+- 设计编辑器内嵌 AI Copilot，支持 Prompt 润色→流式生成/对话式修改问卷→内联标注预览→一键应用的完整交互链路；基于 useReducer 实现两阶段生成流状态机（10 phase × 9 action），并用 Process 步骤可视化统一展示润色、生成、修改三类流程
 - 基于 fetch + ReadableStream 封装 SSE 流式通信层，后端设计自定义 block 协议（<<<COMPONENT>>>标记）实现 LLM 输出的结构化增量推送，前端通过 12 种事件类型驱动 UI 状态机，requestAnimationFrame 缓冲批量刷新控制高频重渲染
 - 实现内联标注预览组件，以 5 种色调 Diff 标注 AI 对原问卷的新增/修改/删除建议，前后端协同的草稿合并策略支持去重拼接和双指针合并，自动生成变更摘要
 - 设计多轮对话会话管理体系，支持会话持久化、多模型动态切换、AI 智能分析流式输出结构化报告与 Word 导出
@@ -211,4 +210,4 @@
 
 ## 面试最强点回答模板
 
-> 这个项目我最想强调的是编辑器内嵌 AI Copilot 的完整设计。从 SSE 流式通信层（自研帧解析器 + 自定义 block 协议实现结构化增量推送），到两阶段 Prompt 润色状态机（useReducer 驱动 10 个 phase 转换），再到内联标注预览（5 种色调 Diff 标注 + 前后端协同草稿合并），这条链路把 AI 能力真正嵌入了编辑器的交互流程里，而不只是"调个接口展示结果"。底层支撑这一切的是统一题型 schema 和可扩展的组件协议——AI 生成、编辑器渲染、移动端展示、统计分析都接在同一套数据结构上。
+> 这个项目我最想强调的是编辑器内嵌 AI Copilot 的完整设计。从 SSE 流式通信层（自研帧解析器 + 自定义 block 协议实现结构化增量推送），到两阶段 Prompt 润色与生成状态机（useReducer 驱动 10 个 phase 转换），再到内联标注预览（5 种色调 Diff 标注 + 前后端协同草稿合并），这条链路把 AI 能力真正嵌入了编辑器的交互流程里，而不只是“调个接口展示结果”。底层支撑这一切的是统一题型 schema 和可扩展的组件协议，AI 生成、编辑器渲染、移动端展示、统计分析都接在同一套数据结构上。
